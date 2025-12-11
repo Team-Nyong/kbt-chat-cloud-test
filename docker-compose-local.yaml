@@ -1,0 +1,60 @@
+services:
+  mongo:
+    image: mongo:8
+    container_name: mongo-ktb
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_DATABASE: bootcamp-chat
+    volumes:
+      - mongo_data:/data/db
+
+  redis:
+    image: redis:7.2
+    container_name: redis-ktb
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+
+  backend:
+    build:
+      context: apps/backend
+    image: ljh09060/ktb-chat-01-be:local
+    container_name: backend-ktb
+    restart: unless-stopped
+    ports:
+      - "5001:5001"
+      - "5002:5002"
+    environment:
+      - MONGO_URI=mongodb://mongo:27017/bootcamp-chat
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - ENCRYPTION_KEY=09b4af784655ab93ccc491545339b7b534fdcb32abb9d3330bb0b836516233bf
+      - ENCRYPTION_SALT=10d1755b2c3716cdd0c6552132ad9e98
+      - JWT_SECRET=bd4b530a6a24e11ec22156b5c3d5d333fc39230eb4cb4efe943bf0cfcd91fb7c
+      - PORT=5001
+      - WS_PORT=5002
+    depends_on:
+      - mongo
+      - redis
+
+  frontend:
+    build:
+      context: apps/frontend
+      args:
+        - NEXT_PUBLIC_API_URL=http://localhost:5001
+        - NEXT_PUBLIC_SOCKET_URL=http://localhost:5002
+    image: ljh09060/ktb-chat-01-fe:local
+    container_name: frontend-ktb
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+
+volumes:
+  mongo_data:
+  redis_data:

@@ -1,0 +1,22 @@
+services:
+  backend:
+    build:
+      context: apps/backend
+      platforms:
+        - "linux/amd64"
+        - "linux/arm64"
+    image: ljh09060/ktb-chat-01-be:latest
+    container_name: backend-ktb
+    restart: unless-stopped
+    ports:
+      - "5001:5001"
+      - "5002:5002"
+    environment:
+      - MONGO_URI=mongodb://10.0.101.103:27017/bootcamp-chat
+      - REDIS_HOST=10.0.101.104
+      - REDIS_PORT=6379
+      - ENCRYPTION_KEY=09b4af784655ab93ccc491545339b7b534fdcb32abb9d3330bb0b836516233bf
+      - ENCRYPTION_SALT=10d1755b2c3716cdd0c6552132ad9e98
+      - JWT_SECRET=bd4b530a6a24e11ec22156b5c3d5d333fc39230eb4cb4efe943bf0cfcd91fb7c
+      - PORT=5001
+      - WS_PORT=5002

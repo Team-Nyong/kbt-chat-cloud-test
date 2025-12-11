@@ -1,0 +1,19 @@
+services:
+  frontend:
+    build:
+      context: apps/frontend
+      platforms:
+        - "linux/amd64"
+        - "linux/arm64"
+      args:
+        - NEXT_PUBLIC_API_URL=https://chat.goorm-ktb-006.goorm.team
+        - NEXT_PUBLIC_SOCKET_URL=https://chat.goorm-ktb-006.goorm.team
+    image: ljh09060/ktb-chat-01-fe:latest
+    container_name: frontend-ktb
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+      
+volumes:
+  mongo_data:
+  redis_data:
